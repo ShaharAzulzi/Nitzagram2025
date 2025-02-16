@@ -2,8 +2,7 @@ import pygame
 
 from constants import *
 from helpers import screen
-
-
+from classes.Comments import Comment
 
 class Post:
     """
@@ -15,14 +14,19 @@ class Post:
         self.description = description
         self.likes_counter = 0
         self.comments = []
-        pass
+        self.comments_display_index = 0
+
+
 
     def add_like(self):
-        self.likes_counter+= 1
+        self.likes_counter += 1
 
     def add_comment(self, text):
-        comment = text
+        comment = Comment(text)
         self.comments.append(comment)
+
+
+
     def display(self):
         """
         Display the Post image/Text, description, location, likes and comments
@@ -30,28 +34,22 @@ class Post:
 
         :return: None
         """
-        #username
-        font = pygame.font.SysFont(FONT_NAME,UI_FONT_SIZE)
-        text = font.render(self.username, True,BLACK)
-        screen.blit(text, [USER_NAME_X_POS, USER_NAME_Y_POS])
+        font = pygame.font.SysFont('chalkduster.ttf', UI_FONT_SIZE)
 
-        #location
-        font = pygame.font.SysFont(FONT_NAME, UI_FONT_SIZE)
-        text = font.render(self.location, True, BLACK)
-        screen.blit(text, [LOCATION_TEXT_X_POS, LOCATION_TEXT_Y_POS])
+        username = font.render(self.username, True,BLACK)
+        screen.blit(username, [USER_NAME_X_POS, USER_NAME_Y_POS])
 
-        #likes
-        font = pygame.font.SysFont(FONT_NAME, UI_FONT_SIZE)
-        text = font.render(self.likes_counter, True, GREY)
-        screen.blit(text, [LIKE_TEXT_X_POS, LIKE_TEXT_Y_POS])
+        location = font.render(self.location, True, BLACK)
+        screen.blit(location, [LOCATION_TEXT_X_POS, LOCATION_TEXT_Y_POS])
 
-        #displaying the description
-        font = pygame.font.SysFont(FONT_NAME,UI_FONT_SIZE)
-        text = font.render(self.description, True, BLACK)
-        screen.blit(text, [DESCRIPTION_TEXT_X_POS, DESCRIPTION_TEXT_Y_POS])
+        likes_text = f"Liked by {self.likes_counter} users"
+        likes_count = font.render(likes_text, True, GREY)
+        screen.blit(likes_count, [LIKE_TEXT_X_POS, LIKE_TEXT_Y_POS])
+
+        description = font.render(str(self.description), True, GREY)
+        screen.blit(description, [DESCRIPTION_TEXT_X_POS, DESCRIPTION_TEXT_Y_POS])
 
         self.display_comments()
-
 
     def display_comments(self):
         """
@@ -80,4 +78,9 @@ class Post:
                 break
 
 
+    def view_more_comments(self):
+        self.comments_display_index = (self.comments_display_index + 1) % len(self.comments)
+
+    def reset_comment_display_index(self):
+        self.comments_display_index = 0
 
